@@ -13,9 +13,11 @@ const RenderCards = ({data, title}) => {
 
 const Home = () => {
 
-  const [loading, setLoading] = useState(false)
-  const [allPosts, setAllPosts] = useState(null)
-  const [searchText, setSearchText] = useState('')
+  const [loading, setLoading] = useState(false);
+  const [allPosts, setAllPosts] = useState(null);
+  const [searchText, setSearchText] = useState('');
+  const [searchTimeout, setSearchTimeout] = useState(null);
+  const [searchedResults, setSearchedResults] = useState(null);
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -43,6 +45,18 @@ const Home = () => {
     fetchPosts();
   }, []);
 
+  const handleSearchChange = (e) => {
+    clearTimeout(searchTimeout);
+    setSearchText(e.target.value);
+
+    setSearchTimeout(
+      setTimeout(() => {
+        const searchResult = allPosts.filter((item) => item.name.toLowerCase().includes(searchText.toLowerCase()) || item.prompt.toLowerCase().includes(searchText.toLowerCase()));
+        setSearchedResults(searchResult);
+      }, 500),
+    );
+  };
+
   return (
     <section className="max-w-7xl mx-auto">
       <div>
@@ -57,7 +71,7 @@ const Home = () => {
           name="text"
           placeholder="Search something..."
           value={searchText}
-          //handleChange={handleSearchChange}
+          handleChange={handleSearchChange}
         />
       </div>
 

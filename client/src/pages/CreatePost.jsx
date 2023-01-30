@@ -56,7 +56,7 @@ const CreatePost = () => {
         setForm({...form, photo: `data:image/jpeg;base64,${data.photo}`})
 
       } catch (error) {
-        alert(error);
+        alert('API Key rotated! Kindly ask the developer to add a new one!');
       } finally {
         setGeneratingImg(false)
       }
