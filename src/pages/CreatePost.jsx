@@ -29,7 +29,7 @@ const CreatePost = () => {
         navigate('/')
 
       } catch (error) {
-          alert(err);
+        alert(err);
       } finally {
         setLoading(false)
       }
@@ -40,26 +40,28 @@ const CreatePost = () => {
 
   const generateImage = async () => {
     if (form.prompt) {
-      try {
+      setGeneratingImg(true)
+      
+      const response = await fetch(`https://openAIdalleMERN.mhuzaifa4.repl.co/api/v1/dalle`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ prompt: form.prompt })
+      })
 
-        setGeneratingImg(true)
-        const response = await fetch(`https://openAIdalleMERN.mhuzaifa4.repl.co/api/v1/dalle`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ prompt: form.prompt })
-        })
-
-        const data = await response.json()
-
+      const data = await response.json() 
+      if(response.ok) { 
         setForm({...form, photo: `data:image/jpeg;base64,${data.photo}`})
-
-      } catch (error) {
-        alert('API Key rotated! Kindly ask the developer to add a new one!');
-      } finally {
-        setGeneratingImg(false)
+      } else {
+        if(response.status === 401){
+          alert('API Key rotated! Kindly ask the developer to add a new one!');
+        } else {
+          alert(data.error);
+        }
       }
+
+      setGeneratingImg(false)
     } else { alert('Kindly enter a prompt') }
   }
 
